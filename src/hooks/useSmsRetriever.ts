@@ -1,14 +1,20 @@
 import { useEffect } from "react";
 import { NativeSMSRetriever } from "@ebrimasamba/react-native-sms-retriever";
 
-type Props = {
+export function useSmsRetriever({
+  enabled,
+  onOtpDetected,
+}: {
   enabled: boolean;
   onOtpDetected: (otp: string) => void;
-};
-
-export function useSmsRetriever({ enabled, onOtpDetected }: Props) {
+}) {
   useEffect(() => {
     if (!enabled) return;
+
+    if (!NativeSMSRetriever) {
+      console.log("SMS Retriever native module unavailable");
+      return;
+    }
 
     let smsSubscription: { remove: () => void } | undefined;
     let errorSubscription: { remove: () => void } | undefined;
@@ -20,13 +26,15 @@ export function useSmsRetriever({ enabled, onOtpDetected }: Props) {
 
         NativeSMSRetriever.startSMSListener();
 
-        smsSubscription = NativeSMSRetriever.onSMSRetrieved((otp: string) => {
-          const code = otp.match(/\b\d{4}\b/)?.[0] ?? otp;
+        smsSubscription = NativeSMSRetriever.onSMSRetrieved(
+          (otp: string) => {
+            const code = otp.match(/\b\d{4}\b/)?.[0] ?? otp;
 
-          if (code) {
-            onOtpDetected(code);
+            if (code) {
+              onOtpDetected(code);
+            }
           }
-        });
+        );
 
         errorSubscription = NativeSMSRetriever.onSMSError((error) => {
           console.log("SMS Retriever error:", error);
@@ -41,7 +49,10 @@ export function useSmsRetriever({ enabled, onOtpDetected }: Props) {
     return () => {
       smsSubscription?.remove();
       errorSubscription?.remove();
-      NativeSMSRetriever.stopSMSListener();
+
+      if (NativeSMSRetriever?.stopSMSListener) {
+        NativeSMSRetriever.stopSMSListener();
+      }
     };
   }, [enabled]);
 }
