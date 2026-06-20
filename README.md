@@ -1,56 +1,154 @@
-# Welcome to your Expo app 👋
+# StapuBox OTP Authentication
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native OTP authentication application built as part of the StapuBox Mobile Developer Assignment.
 
-## Get started
+## Features
 
-1. Install dependencies
+### Authentication Flow
 
-   ```bash
-   npm install
-   ```
+* Mobile number login
+* OTP generation via API
+* OTP verification
+* Auto-submit on OTP completion
+* Invalid OTP handling
+* Success screen after verification
 
-2. Start the app
+### OTP Experience
 
-   ```bash
-   npx expo start
-   ```
+* 4-digit OTP input
+* Automatic focus transition
+* Backspace navigation support
+* Resend OTP functionality
+* 60-second resend cooldown timer
 
-In the output, you'll find options to open the app in a
+### Form Validation
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+* Mobile number validation using Zod
+* React Hook Form integration
+* Error handling and user feedback
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Technical Features
 
-## Get a fresh project
+* Expo Router based navigation
+* NativeWind for styling
+* Axios API client
+* Environment-based configuration
+* TypeScript support
+* Graceful fallback for SMS auto-read
 
-When you're ready, run:
+## Tech Stack
 
-```bash
-npm run reset-project
+* React Native
+* Expo
+* Expo Router
+* TypeScript
+* NativeWind
+* React Hook Form
+* Zod
+* Axios
+
+## Project Structure
+
+```text
+src
+├── app
+│   ├── index.tsx
+│   ├── verify-otp.tsx
+│   ├── success.tsx
+│   └── _layout.tsx
+├── api
+│   ├── client.ts
+│   └── auth.api.ts
+├── constants
+│   └── colors.ts
+├── hooks
+│   └── useSmsRetriever.ts
+└── types
+    └── auth.ts
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Environment Variables
 
-### Other setup steps
+Create a `.env` file in the root directory:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```env
+EXPO_PUBLIC_API_BASE_URL=https://stapubox.com/trial
+EXPO_PUBLIC_API_TOKEN=YOUR_API_TOKEN
+```
 
-## Learn more
+## Installation
 
-To learn more about developing your project with Expo, look at the following resources:
+Install dependencies:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm install
+```
 
-## Join the community
+Start the development server:
 
-Join our community of developers creating universal apps.
+```bash
+npx expo start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Run Android:
+
+```bash
+npx expo run:android
+```
+
+## API Endpoints Used
+
+### Send OTP
+
+```http
+POST /sendOtp
+```
+
+### Verify OTP
+
+```http
+POST /verifyOtp
+```
+
+### Resend OTP
+
+```http
+POST /resendOtp
+```
+
+## Assumptions
+
+* OTP length is 4 digits.
+* Mobile numbers are validated before API submission.
+* OTP is automatically submitted after entering all digits.
+* Resend OTP is restricted by a 60-second cooldown timer.
+
+## SMS Auto Read
+
+SMS Retriever integration was explored and implemented with graceful fallback support.
+
+Automatic SMS retrieval depends on:
+
+* Native Android build configuration
+* Device compatibility
+* Backend SMS format containing the application hash
+
+If SMS auto-read is unavailable, users can manually enter the OTP without impacting the authentication flow.
+
+## Build APK
+
+```bash
+eas build --platform android
+```
+
+## Future Improvements
+
+* Complete SMS Retriever integration
+* Biometric authentication
+* Secure token persistence
+* Unit and integration tests
+* Analytics and monitoring
+
+## Author
+
+Syed Mustafa Ali
